@@ -1,41 +1,24 @@
-import sys
-import os
+from fastapi import FastAPI, Depends
+from utils.protected_route import authenticate
+from routers import userRoute, questionnaireRoute
+from db.db_connection import engine, Base
+import asyncio
 
-print(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
-# Dynamically add the project root to the Python module search path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
-
-from fastapi import FastAPI, Request, HTTPException, Depends
-from shared.firebase_auth import validate_token
-
-
-# async_session = get_db()
 app = FastAPI()
 
-#TODO: initilize the databases
-#TODO: clean up the code
-#TODO: add the routes
-#TODO: implement the AI recommendation logic
+# TDOD: test the questionnaire route properly
+# TODO: maybe move the user to a different service
+# TODO: maybe the get the user_id from the frontend and add it
 
-async def authenticate(request: Request):
-    """
-    Dependency for authenticating Firebase tokens.
-    """
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid or missing token")
-
-    token = auth_header.split(" ")[1]  # Extract the token from the header
-    return validate_token(token)  # Validate the token and return the user data
-
+# Create tables asynchronously
+@app.on_event("startup")
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 @app.get("/")
-async def read_root():
+def read_root():
     return {"message": "Hello World"}
 
-@app.get("/protected")
-async def protected_route(user=Depends(authenticate)):
-    """
-    Example of a protected route.
-    """
-    return {"message": "You are authorized", "user": user}
+app.include_router(userRoute.router, tags=["users"])
+app.include_router(questionnaireRoute.router, tags=["questionnaires"])
