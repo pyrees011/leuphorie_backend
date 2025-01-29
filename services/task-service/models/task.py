@@ -1,4 +1,4 @@
-from typing import List, Literal
+from typing import List, Literal, Any
 from pydantic import BaseModel, Field
 from datetime import datetime
 from bson import ObjectId
@@ -9,7 +9,7 @@ class PyObjectId(ObjectId):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v):
+    def validate(cls, v: Any, field= None, context= None):
         if not ObjectId.is_valid(v):
             raise ValueError("Invalid ObjectId")
         return ObjectId(v)
