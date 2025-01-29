@@ -1,11 +1,11 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from app.core.db import Base
 from datetime import datetime
+from db.db_connection import Base
 
-class Response(Base):
-    __tablename__ = "responses"
+class Questionnaire(Base):
+    __tablename__ = "questionnaires"
 
-    response_id = Column(Integer, primary_key=True)
+    questionnaire_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     question_id = Column(Integer, nullable=False)
     response = Column(String, nullable=False)
