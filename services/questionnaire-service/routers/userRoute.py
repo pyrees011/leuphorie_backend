@@ -1,5 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
-from services.userService import get_users as get_users_service, get_user_by_id as get_user_by_id_service, get_user_by_email as get_user_by_email_service, create_user as create_user_service, update_user as update_user_service, delete_user as delete_user_service
+from services.userService import (
+    get_users as get_users_service, 
+    get_user_by_id as get_user_by_id_service, 
+    get_user_by_email as get_user_by_email_service, 
+    create_user as create_user_service, 
+    update_user as update_user_service, 
+    delete_user as delete_user_service
+)
 from schemas.user_schema import UserResponse, UserCreate
 from utils.protected_route import authenticate
 from sqlalchemy.ext.asyncio import AsyncSession
