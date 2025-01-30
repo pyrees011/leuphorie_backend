@@ -3,10 +3,10 @@ from datetime import datetime
 from db.db_connection import Base
 
 class Questionnaire(Base):
-    __tablename__ = "questionnaires"
+    __tablename__ = "questionnaire"
 
-    questionnaire_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    question_id = Column(Integer, nullable=False)
-    response = Column(String, nullable=False)
+    questionnaire_id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, index=True)
+    question_id = Column(Integer, index=True)
+    response = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
