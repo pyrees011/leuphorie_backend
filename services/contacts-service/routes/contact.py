@@ -8,6 +8,7 @@ router = APIRouter()
 # POST /contact-requests/
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_contact_request(contact_request: ContactRequest):
+    print("Received Contact Request:", contact_request.dict())
     contact_data = contact_request.dict()
     result = await contact_collection.insert_one(contact_data)
     return {"id": str(result.inserted_id), "message": "Contact request submitted successfully."}
