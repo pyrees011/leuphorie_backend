@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request, Body
 from models.task import TaskCategory, TaskCategoryCreate, TaskItemCreate
 from services.task_service import (
     create_category,
@@ -36,16 +36,24 @@ async def add_task(category_id: str, task: TaskItemCreate):
     return result
 
 @router.patch("/categories/{category_id}/tasks/{task_id}/status", response_model=TaskCategory, dependencies=[Depends(authenticate)])
-async def update_task_status_endpoint(category_id: str, task_id: str, status: str):
-    if status not in ["Todo", "Progress", "Reviewing", "Done"]:
+async def update_task_status_endpoint(
+    category_id: str, 
+    task_id: str, 
+    status: str = Body(..., embed=True)
+):
+    if status not in ["todo", "inProgress", "reviewing", "done"]:
         raise HTTPException(status_code=400, detail="Invalid status")
+
     result = await update_task_status(category_id, task_id, status)
     if not result:
         raise HTTPException(status_code=404, detail="Category or task not found")
+
     return result
 
 @router.delete("/categories/{category_id}/tasks/{task_id}", response_model=TaskCategory, dependencies=[Depends(authenticate)])
 async def delete_task_endpoint(category_id: str, task_id: str):
+    print(category_id)
+    print(task_id)
     result = await delete_task(category_id, task_id)
     if not result:
         raise HTTPException(status_code=404, detail="Category or task not found")

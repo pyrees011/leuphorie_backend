@@ -18,7 +18,7 @@ class TaskItem(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     title: str = Field(..., min_length=1, max_length=100)
     description: str = Field(..., min_length=1, max_length=500)
-    status: Literal["Todo", "Progress", "Reviewing", "Done"] = "Todo"
+    status: Literal["todo", "inProgress", "reviewing", "done"] = "todo"
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -45,4 +45,4 @@ class TaskCategoryCreate(BaseModel):
 class TaskItemCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     description: str = Field(..., min_length=1, max_length=500)
-    status: Literal["Todo", "Progress", "Reviewing", "Done"] = "Todo" 
+    status: Literal["todo", "inProgress", "reviewing", "done"] = "todo" 

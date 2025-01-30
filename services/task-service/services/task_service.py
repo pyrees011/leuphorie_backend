@@ -12,7 +12,6 @@ async def create_category(category: TaskCategoryCreate):
     }
     result = await task_collection.insert_one(category_dict)
     created_category = await task_collection.find_one({"_id": result.inserted_id})
-    print(created_category)
     return TaskCategory(**created_category)
 
 async def get_all_categories():
