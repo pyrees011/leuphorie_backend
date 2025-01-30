@@ -1,8 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from models.user_settings import UserSettings, ProfileSettings, NotificationSettings, PreferenceSettings
 from core.db import user_settings_collection
+from pydantic import BaseModel
 
 router = APIRouter()
+
+# ✅ Define request body model
+class CreateUserSettingsRequest(BaseModel):
+    username: str
+    email: str
 
 # fetch User Settings
 @router.get("/settings/{user_id}", response_model=UserSettings)
@@ -51,21 +57,22 @@ async def reset_user_settings(user_id: str):
 
 # create test user
 @router.post("/settings/{user_id}", response_model=UserSettings)
-async def create_user_settings(user_id: str):
+async def create_user_settings(user_id: str, user_data: CreateUserSettingsRequest):
     """
-    Creates a new user settings document with default values.
+    Creates a new user settings document with default values, including username and email.
     """
-    existing_user = await user_settings_collection.find_one({"user_id": user_id})  # ✅ Corrected name
+    existing_user = await user_settings_collection.find_one({"user_id": user_id})
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists")
 
+    # ✅ Save username and email from frontend request
     default_settings = {
         "user_id": user_id,
         "profile": {
-            "full_name": "John Doe",
-            "username": "johndoe",
-            "email": "john@example.com",
-            "phone_number": "+1 (555) 000-0000",
+            "full_name": "",
+            "username": user_data.username,
+            "email": user_data.email,
+            "phone_number": "",
             "bio": "Write a short bio about yourself..."
         },
         "notifications": {
@@ -84,5 +91,5 @@ async def create_user_settings(user_id: str):
         }
     }
 
-    await user_settings_collection.insert_one(default_settings)  # ✅ Corrected name
+    await user_settings_collection.insert_one(default_settings)
     return default_settings

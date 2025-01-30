@@ -1,11 +1,11 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 class ProfileSettings(BaseModel):
-    full_name: str
-    username: str
-    email: EmailStr
-    phone_number: str
+    full_name: Optional[str] = ""
+    username: Optional[str] = ""
+    email: Optional[str] = Field(default="", pattern="^$|^[^@]+@[^@]+\.[^@]+$")
+    phone_number: Optional[str] = ""
     bio: Optional[str] = "Write a short bio about yourself..."
     profile_picture: str = "https://example.com/avatar-placeholder.png"  # Placeholder URL
 
