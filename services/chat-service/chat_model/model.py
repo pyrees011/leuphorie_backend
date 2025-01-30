@@ -1,6 +1,10 @@
 from openai import AsyncOpenAI
 import os
 from dotenv import load_dotenv
+from models.chat import ChatSession
+from datetime import datetime
+from bson import ObjectId
+from db.mongo import chat_collection
 
 load_dotenv()
 
@@ -21,3 +25,30 @@ async def generate_response(messages):
     except Exception as e:
         print(f"Error generating response: {e}")
         return "I apologize, but I'm having trouble generating a response right now."
+
+async def get_or_create_session(session_id: str = None, user_id: str = None):
+    """
+    Retrieves an existing chat session or creates a new one if it doesn't exist.
+
+    :param session_id: Optional session identifier
+    :param user_id: Optional user ID (for authenticated users)
+    :return: ChatSession object
+    """
+    if session_id:
+        session = chat_collection.find_one({"session_id": session_id})
+        if session:
+            return ChatSession(**session)  # Return existing session
+
+    # Create a new chat session
+    new_session = ChatSession(
+        session_id=str(ObjectId()),
+        user_id=user_id,
+        conversation=[],
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+
+    # Insert into MongoDB
+    chat_collection.insert_one(new_session.dict(by_alias=True))
+
+    return new_session
