@@ -19,4 +19,4 @@ app.add_middleware(
 )
 
 # ✅ Register the settings router
-app.include_router(settings_router)
+app.include_router(settings_router, prefix="/api/v1", tags=["settings"])

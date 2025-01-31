@@ -21,4 +21,4 @@ app.add_middleware(
 
 
 # Include routes
-app.include_router(contact_router, prefix="/contact-requests", tags=["Contact Requests"])
+app.include_router(contact_router, prefix="/api/v1", tags=["contacts"])

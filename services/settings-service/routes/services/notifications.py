@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from core.db import user_settings_collection
+from core.db import settings_collection
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ class NotificationSettings(BaseModel):
 
 @router.put("/{user_id}/notifications")
 async def update_notifications(user_id: str, settings: NotificationSettings):
-    result = await user_settings_collection.update_one(
+    result = await settings_collection.update_one(
         {"user_id": user_id},
         {"$set": settings.dict()},
     )

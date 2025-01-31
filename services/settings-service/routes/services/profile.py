@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
-from core.db import user_settings_collection
+from core.db import settings_collection
 
 router = APIRouter()
 
@@ -25,7 +25,7 @@ class ProfileUpdate(BaseModel):
 # ✅ POST: Create User Settings
 @router.post("/{user_id}")
 async def create_user_settings(user_id: str, user_data: UserSettings):
-    existing_user = await user_settings_collection.find_one({"user_id": user_id})
+    existing_user = await settings_collection.find_one({"user_id": user_id})
     
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists")
@@ -41,13 +41,13 @@ async def create_user_settings(user_id: str, user_data: UserSettings):
         "preferences": user_data.preferences,
     }
 
-    await user_settings_collection.insert_one(new_user)
+    await settings_collection.insert_one(new_user)
     return {"message": "User created successfully", "user_id": user_id}
 
 # ✅ PUT: Update Profile Settings
 @router.put("/{user_id}/profile")
 async def update_profile_settings(user_id: str, profile_data: ProfileUpdate):
-    existing_user = await user_settings_collection.find_one({"user_id": user_id})
+    existing_user = await settings_collection.find_one({"user_id": user_id})
     
     if not existing_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -60,5 +60,5 @@ async def update_profile_settings(user_id: str, profile_data: ProfileUpdate):
         "bio": profile_data.bio,
     }
 
-    await user_settings_collection.update_one({"user_id": user_id}, {"$set": update_data})
+    await settings_collection.update_one({"user_id": user_id}, {"$set": update_data})
     return {"message": "Profile updated successfully"}

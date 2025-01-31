@@ -27,6 +27,7 @@ async def get_conversation_history(
     user_id: str,
     session_id: Optional[str] = Query(None)
 ):
+    print(f"Getting conversation history for user {user_id} with session_id {session_id}")
     if session_id:
         return await get_conversation_history_service(session_id, user_id)
     else:

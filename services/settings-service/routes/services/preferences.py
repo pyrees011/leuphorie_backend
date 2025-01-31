@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from core.db import user_settings_collection
+from core.db import settings_collection
 
 router = APIRouter()
 
@@ -13,7 +13,7 @@ class PreferenceSettings(BaseModel):
 
 @router.put("/{user_id}/preferences")
 async def update_preferences(user_id: str, settings: PreferenceSettings):
-    result = await user_settings_collection.update_one(
+    result = await settings_collection.update_one(
         {"user_id": user_id},
         {"$set": settings.dict()},
     )

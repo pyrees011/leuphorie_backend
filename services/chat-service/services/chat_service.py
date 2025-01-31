@@ -28,12 +28,12 @@ async def process_chat_message(message: str, user_id: str, session_id: Optional[
     messages.append({"role": "user", "content": message})
     
     # Generate response
-    response = await generate_response(messages)
-    # response = "Hello"
+    # response = await generate_response(messages)
+    response = "Hello"
 
     # Update conversation in database
     await chat_collection.update_one(
-        {"session_id": session.session_id},
+        { "session_id": session.session_id, "user_id": user_id },
         {
             "$push": {
                 "conversation": {
@@ -45,7 +45,7 @@ async def process_chat_message(message: str, user_id: str, session_id: Optional[
             },
             "$set": {"updated_at": datetime.utcnow()}
         },
-        upsert=True
+        # upsert=True
     )
     
     return {

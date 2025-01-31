@@ -1,30 +1,37 @@
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
+from datetime import datetime
 
 class ProfileSettings(BaseModel):
-    full_name: Optional[str] = ""
-    username: Optional[str] = ""
-    email: Optional[str] = Field(default="", pattern="^$|^[^@]+@[^@]+\.[^@]+$")
-    phone_number: Optional[str] = ""
-    bio: Optional[str] = "Write a short bio about yourself..."
-    profile_picture: str = "https://example.com/avatar-placeholder.png"  # Placeholder URL
+    full_name: str = ""
+    username: str
+    email: str
+    phone_number: str = ""
+    bio: str = "Write a short bio about yourself..."
 
 class NotificationSettings(BaseModel):
     email_updates: bool = True
-    email_reminders: bool = True
-    email_newsletter: bool = False
-    push_reminders: bool = True
-    push_health_alerts: bool = True
-    push_achievements: bool = True
+    task_reminders: bool = True
+    newsletter: bool = True
+    push_task_reminders: bool = False
+    health_alerts: bool = False
+    achievements: bool = True
 
 class PreferenceSettings(BaseModel):
     dark_mode: bool = False
     compact_mode: bool = False
     language: str = "English"
-    time_zone: str = "Pacific Time (PT)"
+    timezone: str = "Pacific Time (PT)"
 
 class UserSettings(BaseModel):
     user_id: str
     profile: ProfileSettings
     notifications: NotificationSettings
     preferences: PreferenceSettings
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }

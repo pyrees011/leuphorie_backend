@@ -35,9 +35,9 @@ async def get_or_create_session(session_id: str = None, user_id: str = None):
     :return: ChatSession object
     """
     if session_id:
-        session = chat_collection.find_one({"session_id": session_id})
+        session = await chat_collection.find_one({"session_id": session_id})
         if session:
-            return ChatSession(**session)  # Return existing session
+            return ChatSession(**session)
 
     # Create a new chat session
     new_session = ChatSession(
@@ -48,7 +48,10 @@ async def get_or_create_session(session_id: str = None, user_id: str = None):
         updated_at=datetime.utcnow()
     )
 
-    # Insert into MongoDB
-    chat_collection.insert_one(new_session.dict(by_alias=True))
+    await chat_collection.update_one(
+        {"session_id": new_session.session_id},
+        {"$setOnInsert": new_session.model_dump(by_alias=True)},
+        upsert=True
+    )
 
     return new_session
