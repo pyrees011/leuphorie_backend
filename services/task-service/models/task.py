@@ -29,6 +29,7 @@ class TaskItem(BaseModel):
 
 class TaskCategory(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    user_id: str
     name: str = Field(..., min_length=1, max_length=50)
     tasks: List[TaskItem] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=datetime.utcnow)
